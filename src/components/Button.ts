@@ -7,11 +7,13 @@ const Button = styled.button`
   border-radius: ${theme.borderRadius};
   color: ${theme.palette.primary.main};
   padding: ${theme.spacing(2)};
+  margin: 4px;
   ${theme.typography.button};
 
   &:hover {
     border: 1px solid ${theme.palette.secondary.light};
     color: ${theme.palette.primary.light};
+    cursor: pointer;
   }
 
   &:active {
