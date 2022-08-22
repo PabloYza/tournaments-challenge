@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { API_TOURNAMENTS_URL } from '../constants/constants';
+import { API_BASE_URL, API_TOURNAMENTS_URL } from '../constants/constants';
 import { TournamentType, InitialStateType } from '../types/types';
 
 const initialState: InitialStateType = {
@@ -11,6 +11,7 @@ const initialState: InitialStateType = {
 export const fetchTournaments = createAsyncThunk(
   'tournaments/fetchTournaments',
   async () => {
+    //todo: string itnerpolation
     const response = await fetch(API_TOURNAMENTS_URL);
     const body = await response.json();
     return body;
@@ -21,7 +22,7 @@ export const addNewTournament = createAsyncThunk(
   'tournaments/addNewTournament',
   async (newTournamentName: any) => {
     try {
-      const newTournament = {
+      const addedTournament = {
         name: newTournamentName,
       };
       const response = await fetch(API_TOURNAMENTS_URL, {
@@ -30,12 +31,59 @@ export const addNewTournament = createAsyncThunk(
           'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify(newTournament),
+        body: JSON.stringify(addedTournament),
       });
 
       return response.json();
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
+
+export const deleteTournament = createAsyncThunk(
+  'tournaments/deleteTournament',
+  async (id: string) => {
+    try {
+      const response = await fetch(`${API_TOURNAMENTS_URL}/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'DELETE',
+      });
+
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
+
+interface updateArg {
+  id: string;
+  newTournamentName: string;
+}
+
+export const updateTournament = createAsyncThunk(
+  'tournaments/updateTournament',
+  async ({ id, newTournamentName }: updateArg) => {
+    const updatedTournament = {
+      name: newTournamentName,
+    };
+    try {
+      const response = await fetch(`${API_TOURNAMENTS_URL}/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'PATCH',
+        body: JSON.stringify(updatedTournament),
+      });
+      // todo updateTournamentStore()
+      return response;
+    } catch (error) {
+      console.error(error);
     }
   }
 );
@@ -44,18 +92,17 @@ const tournamentsSlice = createSlice({
   name: 'tournaments',
   initialState,
   reducers: {
-    updateTournament(state, action) {
-      debugger;
-      const { id, name } = action.payload;
-      const currentTournament = state.tournamentsArray.find(
-        (tournament): Boolean => tournament.id === id
-      );
-      if (currentTournament) {
-        currentTournament.name = name;
-      }
-    },
-
-    /*     deleteTournament(state, action) {
+    /*     updateTournamentStore(state, action) {
+          const { id, name } = action.payload;
+          const currentTournament = state.tournamentsArray.find(
+            (tournament): Boolean => tournament.id === id
+          );
+          if (currentTournament) {
+            currentTournament.name = name;
+          }
+        }, */
+    /* delete tournament from store and update
+     deleteTournament(state, action) {
       const { id } = action.payload
       return state.tournamentsArray.filter((tournament: TournamentType) => {
         tournament.id !== id
@@ -82,7 +129,7 @@ const tournamentsSlice = createSlice({
   },
 });
 
-export const { updateTournament } = tournamentsSlice.actions;
+export const {} = tournamentsSlice.actions;
 
 export default tournamentsSlice.reducer;
 

@@ -5,21 +5,27 @@ import H6 from './H6';
 import { CardStyled } from '../styles';
 import Button from './Button';
 import { useDispatch } from 'react-redux';
-import { updateTournament } from '../features/tournamentsSlice';
+import {
+  deleteTournament,
+  updateTournament,
+} from '../features/tournamentsSlice';
 
 const Card = (tournament: TournamentType) => {
   const { id, name, organizer, game, participants, startDate } = tournament;
   const dispatch = useDispatch<any>();
   const [formatedDate, setFormatedDate] = useState<string>();
+  const [updatedName, setUpdatedName] = useState<string>();
   useEffect(() => {
     setFormatedDate(new Date(startDate).toLocaleString(enGB));
   }, [startDate]);
 
-  const handleDelete = (id: string) => {};
+  const handleDelete = (id: string) => {
+    dispatch(deleteTournament(id));
+  };
 
   const handleUpdate = (id: string) => {
-    let newTournamentName = window.prompt('New tournament name');
-    const updatedData = dispatch(updateTournament(id));
+    let newTournamentName: string = window.prompt('New tournament name') || '';
+    dispatch(updateTournament({ id, newTournamentName }));
   };
 
   return (
@@ -34,7 +40,7 @@ const Card = (tournament: TournamentType) => {
         <p>{formatedDate}</p>
         <div>
           <Button onClick={() => handleUpdate(id)}>EDIT</Button>
-          <Button>DELETE</Button>
+          <Button onClick={() => handleDelete(id)}>DELETE</Button>
         </div>
       </CardStyled>
     </div>

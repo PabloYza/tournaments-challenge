@@ -7,6 +7,7 @@ import { fetchTournaments } from './tournamentsSlice';
 import Card from '../components/Card';
 import { CardContainer, ErrorContent, LoadedContent } from '../styles';
 import Button from '../components/Button';
+import { TournamentType } from '../types/types';
 
 const TournamentsView = (searchInput: any) => {
   const dispatch = useDispatch<any>();
@@ -37,24 +38,48 @@ const TournamentsView = (searchInput: any) => {
         <p>Loading Tournaments...</p>
       </LoadedContent>
     );
-  } else if (postStatus === '') {
-    content = tournaments?.map(
-      ({ id, name, organizer, game, participants, startDate }) => (
-        <CardContainer>
-          <div key={id}>
-            <Card
-              id={id}
-              name={name}
-              organizer={organizer}
-              game={game}
-              participants={participants}
-              startDate={startDate}
-            />
-          </div>
-        </CardContainer>
-      )
-    );
   } else if (postStatus === 'fulfilled') {
+    if (searchInput !== '') {
+      debugger;
+      content = tournaments
+        ?.map(({ id, name, organizer, game, participants, startDate }) => (
+          <CardContainer>
+            <div key={id}>
+              <Card
+                id={id}
+                name={name}
+                organizer={organizer}
+                game={game}
+                participants={participants}
+                startDate={startDate}
+              />
+            </div>
+          </CardContainer>
+        ))
+        .filter((tournament: any) => {
+          debugger;
+
+          return tournament.name === searchInput;
+        });
+    } else {
+      content = tournaments?.map(
+        ({ id, name, organizer, game, participants, startDate }) => (
+          <CardContainer>
+            <div key={id}>
+              <Card
+                id={id}
+                name={name}
+                organizer={organizer}
+                game={game}
+                participants={participants}
+                startDate={startDate}
+              />
+            </div>
+          </CardContainer>
+        )
+      );
+    }
+  } else if (postStatus === 'rejected') {
     content = (
       <ErrorContent>
         <p>Something went wrong</p>
