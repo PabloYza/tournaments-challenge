@@ -39,8 +39,7 @@ const TournamentsView = (searchInput: any) => {
       </LoadedContent>
     );
   } else if (postStatus === 'fulfilled') {
-    if (searchInput !== '') {
-      debugger;
+    /* if (searchInput !== '') {
       content = tournaments
         ?.map(({ id, name, organizer, game, participants, startDate }) => (
           <CardContainer>
@@ -57,11 +56,9 @@ const TournamentsView = (searchInput: any) => {
           </CardContainer>
         ))
         .filter((tournament: any) => {
-          debugger;
-
           return tournament.name === searchInput;
         });
-    } else {
+    }  */ {
       content = tournaments?.map(
         ({ id, name, organizer, game, participants, startDate }) => (
           <CardContainer>

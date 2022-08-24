@@ -15,6 +15,7 @@ const Card = (tournament: TournamentType) => {
   const dispatch = useDispatch<any>();
   const [formatedDate, setFormatedDate] = useState<string>();
   const [updatedName, setUpdatedName] = useState<string>();
+
   useEffect(() => {
     setFormatedDate(new Date(startDate).toLocaleString(enGB));
   }, [startDate]);
@@ -25,6 +26,7 @@ const Card = (tournament: TournamentType) => {
 
   const handleUpdate = (id: string) => {
     let newTournamentName: string = window.prompt('New tournament name') || '';
+    setUpdatedName(newTournamentName);
     dispatch(updateTournament({ id, newTournamentName }));
   };
 

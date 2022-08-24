@@ -80,7 +80,7 @@ export const updateTournament = createAsyncThunk(
         method: 'PATCH',
         body: JSON.stringify(updatedTournament),
       });
-      // todo updateTournamentStore()
+      updateTournamentStore({ id, newTournamentName });
       return response;
     } catch (error) {
       console.error(error);
@@ -92,15 +92,16 @@ const tournamentsSlice = createSlice({
   name: 'tournaments',
   initialState,
   reducers: {
-    /*     updateTournamentStore(state, action) {
-          const { id, name } = action.payload;
-          const currentTournament = state.tournamentsArray.find(
-            (tournament): Boolean => tournament.id === id
-          );
-          if (currentTournament) {
-            currentTournament.name = name;
-          }
-        }, */
+    updateTournamentStore(state, action) {
+      const { id, name } = action.payload;
+      const currentTournament = state.tournamentsArray.find(
+        (tournament): Boolean => tournament.id === id
+      );
+
+      /*       if (currentTournament) {
+        currentTournament.name = name;
+      } */
+    },
     /* delete tournament from store and update
      deleteTournament(state, action) {
       const { id } = action.payload
@@ -129,7 +130,7 @@ const tournamentsSlice = createSlice({
   },
 });
 
-export const {} = tournamentsSlice.actions;
+export const { updateTournamentStore } = tournamentsSlice.actions;
 
 export default tournamentsSlice.reducer;
 
