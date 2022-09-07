@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../app/hooks';
-import { fetchTournaments } from './tournamentsSlice';
 
+import { fetchTournaments } from './tournamentsSlice';
 import Card from '../components/Card';
-import { CardContainer, ErrorContent, LoadedContent } from '../styles';
 import Button from '../components/Button';
+import { CardContainer, ErrorContent, LoadedContent } from '../styles';
 import { TournamentType } from '../types/types';
 
 const TournamentsView = (searchInput: any) => {
@@ -14,21 +14,30 @@ const TournamentsView = (searchInput: any) => {
   const tournaments = useAppSelector(
     (state) => state.Tournaments.tournamentsArray
   );
+  const [tournamentsArray, setTournamentsArray] =
+    useState<TournamentType[]>(tournaments);
   const postStatus = useAppSelector((state) => state.Tournaments.status);
-  const error = useAppSelector((state) => state.Tournaments.error);
 
   /* 	const [tournamentData, setTournamentData] = useState<TournamentType[]>(tournaments)
-		if (searchInput.length > 0) {
-			setTournamentData(tournaments.filter((tournament: TournamentType)=> {
-				return tournament.name.includes(searchInput)
-			}))
-		} */
+    if (searchInput.length > 0) {
+      setTournamentData(tournaments.filter((tournament: TournamentType)=> {
+        return tournament.name.includes(searchInput)
+      }))
+    } */
 
   useEffect(() => {
     if (postStatus === 'idle') {
       dispatch(fetchTournaments());
+      setTournamentsArray(tournaments);
+      console.log('asdasd', tournaments);
     }
-  }, [postStatus, dispatch]);
+    if (searchInput !== ' ') {
+      const filteredTournaments = tournaments.filter((tournament) =>
+        tournament.name.toLowerCase().includes(searchInput)
+      );
+      setTournamentsArray(filteredTournaments);
+    }
+  }, [postStatus, dispatch, searchInput, tournaments]);
 
   let content;
 
@@ -39,40 +48,19 @@ const TournamentsView = (searchInput: any) => {
       </LoadedContent>
     );
   } else if (postStatus === 'fulfilled') {
-    /* if (searchInput !== '') {
-      content = tournaments
-        ?.map(({ id, name, organizer, game, participants, startDate }) => (
-          <CardContainer>
-            <div key={id}>
-              <Card
-                id={id}
-                name={name}
-                organizer={organizer}
-                game={game}
-                participants={participants}
-                startDate={startDate}
-              />
-            </div>
-          </CardContainer>
-        ))
-        .filter((tournament: any) => {
-          return tournament.name === searchInput;
-        });
-    }  */ {
-      content = tournaments?.map(
+    {
+      content = tournamentsArray?.map(
         ({ id, name, organizer, game, participants, startDate }) => (
-          <CardContainer>
-            <div key={id}>
-              <Card
-                id={id}
-                name={name}
-                organizer={organizer}
-                game={game}
-                participants={participants}
-                startDate={startDate}
-              />
-            </div>
-          </CardContainer>
+          <div key={id}>
+            <Card
+              id={id}
+              name={name}
+              organizer={organizer}
+              game={game}
+              participants={participants}
+              startDate={startDate}
+            />
+          </div>
         )
       );
     }
@@ -85,7 +73,7 @@ const TournamentsView = (searchInput: any) => {
     );
   }
 
-  return <div>{content}</div>;
+  return <CardContainer>{content}</CardContainer>;
 };
 
 export default TournamentsView;

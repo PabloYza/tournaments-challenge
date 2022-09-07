@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { API_BASE_URL, API_TOURNAMENTS_URL } from '../constants/constants';
-import { TournamentType, InitialStateType } from '../types/types';
+import { API_TOURNAMENTS_URL } from '../constants/constants';
+import { TournamentType, InitialStateType, updateArg } from '../types/types';
 
 const initialState: InitialStateType = {
   tournamentsArray: [],
@@ -11,16 +11,19 @@ const initialState: InitialStateType = {
 export const fetchTournaments = createAsyncThunk(
   'tournaments/fetchTournaments',
   async () => {
-    //todo: string itnerpolation
     const response = await fetch(API_TOURNAMENTS_URL);
     const body = await response.json();
     return body;
   }
 );
 
+/* I have a problem here that I am not sure how to solve, the page needs a full reload to show
+the created tournament. I'm trying to make use of optimistic updates but this is bugging me. I dont
+want to force an update but its one of the few options I have 
+ */
 export const addNewTournament = createAsyncThunk(
   'tournaments/addNewTournament',
-  async (newTournamentName: any) => {
+  async (newTournamentName: string) => {
     try {
       const addedTournament = {
         name: newTournamentName,
@@ -32,8 +35,9 @@ export const addNewTournament = createAsyncThunk(
         },
         method: 'POST',
         body: JSON.stringify(addedTournament),
+      }).then((response) => {
+        return response;
       });
-
       return response.json();
     } catch (error) {
       console.error(error);
@@ -60,16 +64,11 @@ export const deleteTournament = createAsyncThunk(
   }
 );
 
-interface updateArg {
-  id: string;
-  newTournamentName: string;
-}
-
 export const updateTournament = createAsyncThunk(
   'tournaments/updateTournament',
-  async ({ id, newTournamentName }: updateArg) => {
+  async ({ id, name }: updateArg) => {
     const updatedTournament = {
-      name: newTournamentName,
+      name,
     };
     try {
       const response = await fetch(`${API_TOURNAMENTS_URL}/${id}`, {
@@ -80,7 +79,6 @@ export const updateTournament = createAsyncThunk(
         method: 'PATCH',
         body: JSON.stringify(updatedTournament),
       });
-      updateTournamentStore({ id, newTournamentName });
       return response;
     } catch (error) {
       console.error(error);
@@ -92,23 +90,25 @@ const tournamentsSlice = createSlice({
   name: 'tournaments',
   initialState,
   reducers: {
+    addTournamentStore(state, action) {
+      const newTournament = action.payload;
+      state.tournamentsArray.push(newTournament);
+    },
     updateTournamentStore(state, action) {
       const { id, name } = action.payload;
       const currentTournament = state.tournamentsArray.find(
         (tournament): Boolean => tournament.id === id
       );
-
-      /*       if (currentTournament) {
+      if (currentTournament) {
         currentTournament.name = name;
-      } */
+      }
     },
-    /* delete tournament from store and update
-     deleteTournament(state, action) {
-      const { id } = action.payload
-      return state.tournamentsArray.filter((tournament: TournamentType) => {
-        tournament.id !== id
-      })
-    } */
+    deleteTournamentStore(state, action) {
+      const id = action.payload;
+      state.tournamentsArray = state.tournamentsArray.filter(
+        (tournament) => tournament.id !== id
+      );
+    },
   },
   extraReducers(builder) {
     builder
@@ -130,9 +130,10 @@ const tournamentsSlice = createSlice({
   },
 });
 
-export const { updateTournamentStore } = tournamentsSlice.actions;
+export const {
+  updateTournamentStore,
+  deleteTournamentStore,
+  addTournamentStore,
+} = tournamentsSlice.actions;
 
 export default tournamentsSlice.reducer;
-
-export const AllTournaments = (state: typeof initialState) =>
-  state.tournamentsArray;

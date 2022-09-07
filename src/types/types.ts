@@ -15,3 +15,10 @@ export interface InitialStateType {
   status: string;
   error: string;
 }
+
+export interface CardPropTypes extends TournamentType {}
+
+export interface updateArg {
+  id: string;
+  name: string;
+}

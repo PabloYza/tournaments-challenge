@@ -23,7 +23,7 @@ const App = () => {
   };
 
   const handleCreate = () => {
-    let newTournamentName = window.prompt('Tournament name');
+    let newTournamentName: string = window.prompt('Tournament name') || '';
     dispatch(addNewTournament(newTournamentName));
   };
 
