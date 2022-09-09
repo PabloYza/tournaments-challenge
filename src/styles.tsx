@@ -14,13 +14,14 @@ export const LoadedContent = styled.div`
 export const CardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
+  margin-top: 10px;
 `;
 
 export const CardStyled = styled.div`
   background: ${theme.palette.background.base};
   border-radius: 4px;
   margin: 12px 12px;
-  width: 250px;
+  width: 270px;
   padding: 10px;
 `;
 

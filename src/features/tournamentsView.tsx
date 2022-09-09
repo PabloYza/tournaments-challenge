@@ -15,7 +15,6 @@ import {
 } from '../styles';
 import H4 from '../components/H4';
 import SearchBar from '../components/SearchBar';
-import { updateSourceFile } from 'typescript';
 
 const TournamentsView = () => {
   /* doing const dispatch = useAppDispatch(); || const dispatch : AppDispatch = useDispatch();

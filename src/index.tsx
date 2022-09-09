@@ -8,12 +8,13 @@ import Container from './components/Container';
 import TournamentsView from './features/tournamentsView';
 import { fetchTournaments } from './features/tournamentsSlice';
 import { useAppSelector } from './app/hooks';
+import { POSTSTATUS_IDLE } from './constants/constants';
 
 const App = () => {
   const dispatch = useDispatch<any>();
   const postStatus = useAppSelector((state) => state.Tournaments.status);
   useEffect(() => {
-    if (postStatus === 'idle') {
+    if (postStatus === POSTSTATUS_IDLE) {
       dispatch(fetchTournaments());
     }
   }, []);

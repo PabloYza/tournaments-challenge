@@ -1,10 +1,15 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { API_TOURNAMENTS_URL } from '../constants/constants';
+import {
+  API_TOURNAMENTS_URL,
+  POSTSTATUS_FULFILLED,
+  POSTSTATUS_IDLE,
+  POSTSTATUS_PENDING,
+} from '../constants/constants';
 import { TournamentType, InitialStateType, updateArg } from '../types/types';
 
 const initialState: InitialStateType = {
   tournamentsArray: [],
-  status: 'idle',
+  status: POSTSTATUS_IDLE,
   error: '',
 };
 
@@ -17,10 +22,6 @@ export const fetchTournaments = createAsyncThunk(
   }
 );
 
-/* I have a problem here that I am not sure how to solve, the page needs a full reload to show
-the created tournament. I'm trying to make use of optimistic updates but this is bugging me. I dont
-want to force an update but its one of the few options I have 
- */
 export const addNewTournament = createAsyncThunk(
   'tournaments/addNewTournament',
   async (newTournamentName: string) => {
@@ -113,12 +114,12 @@ const tournamentsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(fetchTournaments.pending, (state) => {
-        state.status = 'pending';
+        state.status = POSTSTATUS_PENDING;
       })
       .addCase(
         fetchTournaments.fulfilled,
         (state, action: PayloadAction<TournamentType[]>) => {
-          state.status = 'fulfilled';
+          state.status = POSTSTATUS_FULFILLED;
           state.tournamentsArray = action.payload;
           state.error = '';
         }
