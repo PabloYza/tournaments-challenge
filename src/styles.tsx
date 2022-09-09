@@ -20,7 +20,7 @@ export const CardStyled = styled.div`
   background: ${theme.palette.background.base};
   border-radius: 4px;
   margin: 12px 12px;
-  min-width: 250px;
+  width: 250px;
   padding: 10px;
 `;
 
